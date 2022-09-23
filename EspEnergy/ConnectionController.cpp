@@ -1,5 +1,5 @@
 #include "ConnectionController.h"
-
+#include "TimeController.h"
 InternetConfig *conf;
 
 WebServer webServer(80);
@@ -38,12 +38,19 @@ boolean configureDevice() {
       is_connected = selectEncryptionType(WiFi.encryptionType(webServer.arg("network").toInt()), 
         conf->ssid, conf->username, conf->password);
     });
-
   webServer.begin();
   Serial.println("Web server is on.");
+  int count=0;
+  
+  //loop che gira fin quando il client non esegue una POST a quel punto richiamo la funzione WebServer.on()
+  
   while(!is_connected) {
     webServer.handleClient();
-    delay(2);
+    delay(4);
+    if(count>10000){
+      return false;
+    }
+    count++;
   }
   return is_connected;
 }
@@ -135,6 +142,7 @@ boolean selectEncryptionType(wifi_auth_mode_t encryption, const char* ssid, cons
     delay(500);
     counter += 500;
     if(counter > 30000){
+      Serial.println("CONNESSIONE FALLITA");
       return false;
     }
   }
@@ -161,7 +169,6 @@ void connectWpa(const char* ssid, const char* password) {
 void connectWpa2Enterprise(const char* ssid, const char* username, const char* password) {
   WiFi.disconnect(true);
   WiFi.mode(WIFI_STA);
-  
   esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)username, strlen(username));
   esp_wifi_sta_wpa2_ent_set_username((uint8_t *)username, strlen(username));
   esp_wifi_sta_wpa2_ent_set_password((uint8_t *)password, strlen(password));
@@ -195,4 +202,29 @@ boolean reconnect(){
     }else{
       return true;
   }
+}
+
+void connectionTask(TimerHandle_t xTimer){
+  bool flag=false;
+  if(WiFi.status() != WL_CONNECTED){
+    Serial.println("dispositivo non connesso ritorno alla pagina di configurazione");
+    flag=configureDevice();
+  }
+  
+  Serial.println("Dispositivo connesso");
+  if(flag){
+    syncRTCtoNTP();
+  }
+}
+
+void riconnessione(void *pvParameters){
+  while(true){
+    Serial.println(xPortGetFreeHeapSize());
+    
+    
+  }
+ /* if(WiFi.status() != WL_CONNECTED){
+      configureDevice();
+    }
+    */
 }

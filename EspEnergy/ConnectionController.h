@@ -28,3 +28,5 @@ void connectWpa2Enterprise(const char* ssid, const char* username, const char* p
 void checkConnectionStatus(WiFiEvent_t event, WiFiEventInfo_t info);
 void checkConnection();
 boolean reconnect();
+void connectionTask(TimerHandle_t xTimer);
+void riconnessione(void *pvParameters);

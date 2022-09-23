@@ -85,8 +85,8 @@ InternetConfig *readFromFile()
 
 void readMeasurementFromFile()
 {
-  struct timeval tv_now;
-  gettimeofday(&tv_now, NULL);
+    struct timeval tv_now;
+    gettimeofday(&tv_now, NULL);
     int nm=numeroMisurazioni();
     unsigned long del=0;
     root = SPIFFS.open("/measurement.txt");
@@ -94,6 +94,8 @@ void readMeasurementFromFile()
      Serial.println("error opening file .txt");
      return ;
     }
+    Serial.print("NUMERO DELLE MISURAZIONI: ");
+    Serial.println(nm);
    while (root.available())
       {
        m = (byte *)malloc(sizeof(Measurement));
@@ -106,7 +108,9 @@ void readMeasurementFromFile()
         for(int i=0;i<15;i++){
           temp.milli[i]=((Measurement *) m)->milli[i];
         }
-        if(temp.milli[0]=='0');
+        Serial.println(temp.milli[0]);
+        if(temp.milli[0]=='0'){
+          Serial.println("CORREZIONE TEMPO");
           String milliScarto=String (tv_now.tv_usec/1000);
           String milli=String (tv_now.tv_sec-(nm*5));
           milli=milli+milliScarto;

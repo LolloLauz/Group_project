@@ -42,6 +42,9 @@ void ledTask(void * parameter){
   for(;;){
     if(WiFi.status() == WL_CONNECTED){
       setGreenLight();
+      if(!client.connected() && !client.connect(CLIENT_ID)){
+        setBlueLight();
+      }
     } else {
       setRedLight();
     }

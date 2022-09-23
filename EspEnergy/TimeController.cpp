@@ -23,7 +23,11 @@ void printDateTime(){
 }
 
 void syncRTCtoNTP() {
+  Serial.println("Sono in timeController.c e sincronizzo il tempo");
   configTime(GMT_OFFSET_SEC, DAYLIGHT_OFFSET_SEC, NTP_SERVER);
+  if(WiFi.status() != WL_CONNECTED){
+    Serial.println("dispositivo non connesso sincronizzazione errata");
+  }
 }
 
 // Time Sync Task
@@ -49,4 +53,9 @@ unsigned long getTimeMillis(){
   Serial.println(epochTime);
   return epochTime;
 
+}
+void sincronizzaOra(WiFiEvent_t event, WiFiEventInfo_t info){
+    Serial.println("Evento di riconnessione o connessione ad una rete");
+    Serial.println("Sincronizzo l'orario");
+    syncRTCtoNTP();
 }

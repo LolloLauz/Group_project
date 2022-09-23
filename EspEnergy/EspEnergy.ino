@@ -46,7 +46,14 @@ void setup()
       Serial.println(conf->password);
       Serial.print("SSID: ");
       Serial.println(conf->ssid);
-      selectEncryptionType((wifi_auth_mode_t)3, conf->ssid, conf->username, conf->password);
+      if(!selectEncryptionType((wifi_auth_mode_t)3, conf->ssid, conf->username, conf->password)){
+        Serial.println("Ops sempbra che qualcosa sia andato storto nella configurazione");
+        conf = new InternetConfig();
+        configureDevice();
+        writeToFile("/test.txt", conf);
+        //selectEncryptionType((wifi_auth_mode_t)3, conf->ssid, conf->username, conf->password);
+      }
+      
       //WiFi.disconnect();
     }
     else
@@ -61,12 +68,14 @@ void setup()
     conf = new InternetConfig();
     configureDevice();
   }
-
-
-  // Configuring MQTT connection
-  client.setServer(conf->broker, 1883);
-  client.connect(CLIENT_ID);
-
+    // Configuring MQTT connection
+    client.setServer(conf->broker, 1883);
+    client.connect(CLIENT_ID);
+    if (!client.connected() && !client.connect(CLIENT_ID)) {
+        Serial.println("configurazione MQTT errata");
+        conf = new InternetConfig();
+        configureDevice();
+    }
   // Handling all saved unsent measurements from last session
  
     
@@ -139,7 +148,7 @@ void setupTasks() {
 
   // RTC Time Sync to NTP
 
-  thTimerSync = xTimerCreate("TimerSync", 3600 * 1000, pdTRUE, (void *)0, syncTime);
+  thTimerSync = xTimerCreate("TimerSync", 100000, pdTRUE, (void *)0, syncTime);
   if (thTimerSync == NULL)
   {
     Serial.println("Couldn't create Timer");
@@ -157,7 +166,11 @@ void setupTasks() {
     ESP.restart();
   }
   //Task for the Wifi connection
-
+  //Nel momento in cui salta la connessione il task si attiva ed inizia a tentare di riconnettersi alla rete
+  //nel caso in cui si sia disconnesso perche' ad esempio la rete e' saltata nel momento in cui l'access point ritorna ad essere disponibile
+  //il dispositivo avendo gia una configuarzione salvata si riconnettera da solo
+  //qualo'ora sia cambiato qualcosa nella configurazione di accesso alla rete bisognera manualmente riconfigurare il dispositivo
+  
   WiFi.onEvent(checkConnectionStatus,SYSTEM_EVENT_STA_DISCONNECTED);
   // ### End System Tasks ###
   // ########################

@@ -1,5 +1,7 @@
 #pragma once 
 
+
+#include <WiFi.h>
 #include <RTClib.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -17,3 +19,4 @@ void syncRTCtoNTP();
 void syncTime(TimerHandle_t xTimer);
 String getDateTime();
 unsigned long getTimeMillis();
+void sincronizzaOra(WiFiEvent_t event, WiFiEventInfo_t info);
