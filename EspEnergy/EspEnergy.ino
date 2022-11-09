@@ -24,11 +24,7 @@ void setup()
 {
   // Setting up serial and pin modes
   Serial.begin(115200);
-  pinMode(BUTTON_RESET_PIN, INPUT_PULLUP);
-  pinMode(VOLT_PIN, INPUT);
-  pinMode(AMPERE_ONE_PIN, INPUT);
-  pinMode(AMPERE_TWO_PIN, INPUT);
-  pinMode(AMPERE_THREE_PIN, INPUT);
+  
   attachInterrupt(BUTTON_RESET_PIN, buttonPressed, FALLING);
 
   // Configuring Flash Memory and WiFi connection

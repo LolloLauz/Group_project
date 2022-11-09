@@ -5,8 +5,8 @@
 #include "FlashController.h"
 
 #define RED_LIGHT_PIN 4
-#define GREEN_LIGHT_PIN 16
-#define BLUE_LIGHT_PIN 17
+#define GREEN_LIGHT_PIN 1
+#define BLUE_LIGHT_PIN 2
 
 void setupLed();
 void setRedLight();

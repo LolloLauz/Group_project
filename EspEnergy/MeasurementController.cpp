@@ -1,4 +1,11 @@
 #include "MeasurementController.h"
+#if defined(ESP32)
+//RX 16 
+//TX 17
+PZEM004Tv30 pzem(Serial2, 16, 17);
+#else
+PZEM004Tv30 pzem(Serial2);
+#endif
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -6,10 +13,12 @@ QueueHandle_t queue;
 void readTask(TimerHandle_t xTimer)
 {
   // Measurement Production
-  int volt = analogRead(VOLT_PIN);
-  int ampere_one = analogRead(AMPERE_ONE_PIN);
-  int ampere_two = analogRead(AMPERE_TWO_PIN);
-  int ampere_three = analogRead(AMPERE_THREE_PIN);
+  float voltage = pzem.voltage();
+  float current = pzem.current();
+  float power = pzem.power();
+  float energy = pzem.energy();
+  float frequency = pzem.frequency();
+  float pf = pzem.pf();
   //ricavo la data tramite i millisecondi
   //il problema per la gestione in modo corretta della data viene scaricato a valle 
   struct timeval tv_now;
@@ -25,7 +34,7 @@ void readTask(TimerHandle_t xTimer)
   }
   char milli[14];
   tempmilli.toCharArray(milli,14);
-  Measurement misura = {volt, ampere_one, ampere_two, ampere_three};
+  Measurement misura = {voltage, current, power, frequency,pf};
   for (int i=0;i<15;i++){
     misura.milli[i]=milli[i];
   }

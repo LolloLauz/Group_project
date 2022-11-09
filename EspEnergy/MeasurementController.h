@@ -1,5 +1,5 @@
 #pragma once
-
+#include <PZEM004Tv30.h>
 #include <PubSubClient.h>
 #include <WiFiClient.h>
 
@@ -12,6 +12,12 @@
 #define AMPERE_ONE_PIN 32
 #define AMPERE_TWO_PIN 33
 #define AMPERE_THREE_PIN 25
+
+
+/* Hardware Serial2 is only available on certain boards.
+ * For example the Arduino MEGA 2560
+*/
+
 
 #define CLIENT_ID "Building0Test"
 

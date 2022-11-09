@@ -4,12 +4,14 @@
 #include <Arduino_JSON.h>
 
 typedef struct {
-  int volt;
-  int ampere_one;
-  int ampere_two;
-  int ampere_three;
+  float voltage;
+    float current;
+    float power;
+    float energy ;
+    float frequency;
+    float pf;
   char milli[14];
 } Measurement;
 
 String toJson(Measurement dataVariable);
-double scale(int analog, double min, double max);
+//double scale(int analog, double min, double max);

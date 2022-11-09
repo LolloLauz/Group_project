@@ -101,14 +101,15 @@ void readMeasurementFromFile()
        m = (byte *)malloc(sizeof(Measurement));
        root.read(m, sizeof(Measurement));
         Measurement temp;
-        temp.volt=((Measurement *) m)->volt;
-        temp.ampere_one=((Measurement *) m)->ampere_one;
-        temp.ampere_two=((Measurement *) m)->ampere_two;
-        temp.ampere_three=((Measurement *) m)->ampere_three;
+        temp.voltage=((Measurement *) m)->voltage;
+        temp.current=((Measurement *) m)->current;
+        temp.power=((Measurement *) m)->power;
+        temp.energy=((Measurement *) m)->energy;
+        temp.frequency=((Measurement *) m)->frequency;
+        temp.pf=((Measurement *) m)->pf;
         for(int i=0;i<15;i++){
           temp.milli[i]=((Measurement *) m)->milli[i];
         }
-        Serial.println(temp.milli[0]);
         if(temp.milli[0]=='0'){
           Serial.println("CORREZIONE TEMPO");
           String milliScarto=String (tv_now.tv_usec/1000);
